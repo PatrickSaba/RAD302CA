@@ -4,24 +4,45 @@
 <div class="jumbotron">
     <h1>RAD 302 CA</h1>
     <p class="lead">Application to check Real time traffic in cities, With google seach functionality</p>
-   
+
 </div>
+<div class="panel panel-primary">
+    <div class="panel-heading">Search</div>
+    <div class="panel-body" style="overflow-x:hidden; height:90px">
+
+        <script>
+            //google search bar
+            (function () {
+                var cx = '013025913521072357559:yasobqvly0m';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+                    '//www.google.com/cse/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+            })();
+        </script>
+        <gcse:search></gcse:search>
+    </div>
+</div>
+
 <div class="row">
     <div class="col-md-2">
-            <div class="panel panel-primary">
-                <div class="panel-heading">Country</div>
-                <div class="panel-body" style="overflow-x:hidden; height:400px">
-                  <table class="table-striped table-condensed"
-                         id="countryTbl">
-                    
-                     @foreach (var item in Model)
-                   {
-                      <tr style="cursor:pointer" id="@item.CountryId"><td>@item.CountryName</td></tr>
-                         
-                   }
-                    </table>
-                </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">Country</div>
+            <div class="panel-body" style="overflow-x:hidden; height:400px">
+                <table class="table-striped table-condensed"
+                       id="countryTbl">
+
+                    @foreach (var item in Model)
+                    {
+                        <tr style="cursor:pointer" id="@item.CountryId"><td>@item.CountryName</td></tr>
+
+                    }
+                </table>
             </div>
+        </div>
     </div>
     <div class="col-md-4">
         <div class="panel panel-primary">
@@ -35,22 +56,11 @@
     </div>
 </div>
 
-<script>//google search bar
-    (function () {
-        var cx = '013025913521072357559:yasobqvly0m';
-        var gcse = document.createElement('script');
-        gcse.type = 'text/javascript';
-        gcse.async = true;
-        gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
-            '//www.google.com/cse/cse.js?cx=' + cx;
-        var s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(gcse, s);
-    })();
-</script>
-<gcse:search></gcse:search>
 
 
-<script>// map
+
+<script>
+// map
     var geocoder;
     var map;
 
@@ -75,7 +85,7 @@
         geocoder = new google.maps.Geocoder();
     });
     function geocodeLookup(address) {
-        geocoder.geocode({'address': address }, function (results, status) {
+        geocoder.geocode({ 'address': address }, function (results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
                 map.setCenter(results[0].geometry.location);
                 var marker = new google.maps.Marker({
