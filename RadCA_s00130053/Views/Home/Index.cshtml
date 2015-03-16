@@ -1,24 +1,103 @@
-﻿<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+﻿@model IEnumerable<RadCA_s00130053.Models.Countries>
+<script src="https://maps.googleapis.com/maps/api/js?
+          AIzaSyBFYa78_Isv4KbTn1ShF2DRVhjP4mLLERM&sensor=false"></script>
+<div class="jumbotron">
+    <h1>RAD 302 CA</h1>
+    <p class="lead">Application to check Real time traffic in cities, With google seach functionality</p>
+   
 </div>
 <div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>ASP.NET Web API is a framework that makes it easy to build HTTP services that reach
-        a broad range of clients, including browsers and mobile devices. ASP.NET Web API
-        is an ideal platform for building RESTful applications on the .NET Framework.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301870">Learn more &raquo;</a></p>
+    <div class="col-md-2">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Country</div>
+                <div class="panel-body" style="overflow-x:hidden; height:400px">
+                  <table class="table-striped table-condensed"
+                         id="countryTbl">
+                    
+                     @foreach (var item in Model)
+                   {
+                      <tr style="cursor:pointer" id="@item.CountryId"><td>@item.CountryName</td></tr>
+                         
+                   }
+                    </table>
+                </div>
+            </div>
     </div>
     <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301871">Learn more &raquo;</a></p>
+        <div class="panel panel-primary">
+            <div class="panel-heading">Location</div>
+
+            <div class="panel-body" id="ctyTbl"></div>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301872">Learn more &raquo;</a></p>
+    <div class="col-md-6">
+        <div id="gmap" style="width: 500px; height: 500px"></div>
     </div>
 </div>
+
+<script>//google search bar
+    (function () {
+        var cx = '013025913521072357559:yasobqvly0m';
+        var gcse = document.createElement('script');
+        gcse.type = 'text/javascript';
+        gcse.async = true;
+        gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+            '//www.google.com/cse/cse.js?cx=' + cx;
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(gcse, s);
+    })();
+</script>
+<gcse:search></gcse:search>
+
+
+<script>// map
+    var geocoder;
+    var map;
+
+    $(function () {
+        $('table tr').click(function () {
+            var id = this.id;
+            $.ajax({
+                type: "GET",
+                url: '/api/Countries/GetCountries/' + id,
+                contentType: "text/plain; charset-utf-8",
+                data: id,
+                dataType: "json",
+                success: function (data) {
+                    $('#ctyTbl').empty().append(data.City);
+                    geocodeLookup(data.City);
+                }
+            });
+        }
+        );
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+        geocoder = new google.maps.Geocoder();
+    });
+    function geocodeLookup(address) {
+        geocoder.geocode({'address': address }, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                map.setCenter(results[0].geometry.location);
+                var marker = new google.maps.Marker({
+                    map: map,
+                    position: results[0].geometry.location
+                });
+            } else {
+                alert('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+    }
+    function initialize() {
+        geocoder = new google.maps.Geocoder();
+        var myLatlng = new google.maps.LatLng(34.04924594193164, -118.24104309082031);
+        var mapOptions = {
+            zoom: 13,
+            center: myLatlng
+        }
+        var map = new google.maps.Map(document.getElementById('gmap'), mapOptions);
+
+        var trafficLayer = new google.maps.TrafficLayer();
+        trafficLayer.setMap(map);
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+</script>
